@@ -1,7 +1,32 @@
-import '../styles/globals.css'
+//Component
+import App from "next/app";
+import { Provider } from "react-redux";
+import { wrapper, store } from "../store";
+//Style
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/globals.css";
+import "@/styles/main.scss";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+class MyApp extends App {
+  static async getInitialProps({ Component, ctx }) {
+    const pageProps = Component.getInitialProps
+      ? await Component.getInitialProps(ctx)
+      : {};
+
+    //Anything returned here can be access by the client
+    return { pageProps: pageProps };
+  }
+
+  render() {
+    //Information that was returned  from 'getInitialProps' are stored in the props i.e. pageProps
+    const { Component, pageProps } = this.props;
+
+    return (
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
+    );
+  }
 }
 
-export default MyApp
+export default wrapper.withRedux(MyApp);
